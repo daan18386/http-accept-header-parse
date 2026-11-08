@@ -34,3 +34,10 @@ Wildcards are kept as literal strings. `parseAccept('text/*;q=0.5')` gives you `
 - `parseAccept(header)` returns media ranges sorted by descending `q`, ties in original order. Each range is `{ type, params, q }`, where `type` is lowercased, `params` holds every non-`q` parameter with lowercased names and unquoted values, and `q` is a number in `0..1`. Malformed ranges and ranges with `q=0` are omitted.
 - `preferred(header)` returns the first range from `parseAccept`, or `null` for an empty or unusable header.
 - `qualityOf(header, type)` returns the `q` value for an exact, case-insensitive type match, ignoring parameters, or `null` if the type is absent. It does not expand wildcards.
+
+## Performance
+
+The window keeps a bounded buffer, so `push` is constant time and memory does not
+grow with the length of the stream. `peak` and `trough` are linear in the window
+size, which is the trade that keeps `push` cheap.
+
